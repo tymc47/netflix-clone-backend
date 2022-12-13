@@ -1,6 +1,7 @@
 import "dotenv/config";
 import express from "express";
 import mongoose from "mongoose";
+import loginRouter from "./router/loginRouter";
 import usersRouter from "./router/userRouter";
 import {
   errorHandler,
@@ -13,7 +14,7 @@ const app = express();
 app.use(express.json());
 app.use(requestLogger);
 
-const PORT = 3000;
+const PORT = 3001;
 
 mongoose
   .connect(process.env.MONGO_URI!)
@@ -25,6 +26,7 @@ mongoose
   });
 
 app.use("/api/users", usersRouter);
+app.use("/api/login", loginRouter);
 app.use(unknownEndpoint);
 app.use(errorHandler);
 
