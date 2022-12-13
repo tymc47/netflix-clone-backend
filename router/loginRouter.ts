@@ -12,6 +12,9 @@ loginRouter.post("/", (async (
 ) => {
   const { username, password } = req.body;
 
+  if (!username || !password)
+    return res.status(400).json({ error: "missing username or passowrd" });
+
   const user = await User.findOne({ username });
   const passwordCorrect =
     user === null ? false : await bcrypt.compare(password, user.passwordHash);
@@ -29,7 +32,7 @@ loginRouter.post("/", (async (
 
   const token = jwt.sign(userForToken, process.env.SECRET!);
 
-  res.status(200).send({ token, username: user.username });
+  return res.status(200).send({ token, username: user.username });
 }) as RequestHandler);
 
 export default loginRouter;
