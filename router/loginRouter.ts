@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import express, { RequestHandler, Request, Response } from "express";
 import User from "../models/userModel";
-import { userRequest } from "../types";
+import { userRequest } from "./userRouter";
 const loginRouter = express.Router();
 
 loginRouter.post("/", (async (
@@ -32,7 +32,9 @@ loginRouter.post("/", (async (
 
   const token = jwt.sign(userForToken, process.env.SECRET!);
 
-  return res.status(200).send({ token, username: user.username });
+  return res
+    .status(200)
+    .send({ token, username: user.username, mylist: user.list });
 }) as RequestHandler);
 
 export default loginRouter;
