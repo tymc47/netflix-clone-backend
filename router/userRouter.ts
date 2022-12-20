@@ -42,10 +42,29 @@ usersRouter.post("/", (async (
 
     const token = jwt.sign(userForToken, process.env.SECRET!);
 
-    return res.status(201).json({ token, username: savedUser.username });
+    return res
+      .status(201)
+      .json({ token, username: savedUser.username, mylist: [] });
   } catch (err) {
     next(err);
   }
+
+  return;
+}) as express.RequestHandler);
+
+usersRouter.post("/check/", (async (
+  req: Request<object, object, { username: string }>,
+  res: Response
+) => {
+  const { username } = req.body;
+
+  if (!username) return res.status(201).json(false);
+
+  const user = await User.findOne({ username: username });
+
+  if (!user) return res.status(201).json(false);
+
+  if (user) return res.status(201).json(true);
 
   return;
 }) as express.RequestHandler);
@@ -66,8 +85,6 @@ usersRouter.put("/", (async (
     if (!decodedToken || typeof decodedToken !== "object" || !decodedToken.id) {
       return res.status(401).json({ error: "token missing or invalid" });
     }
-
-    console.log(decodedToken.id);
 
     const user = await User.findById(decodedToken.id);
 
